@@ -1,0 +1,13 @@
+<div class="app">
+  <h1>LangGraph Workflow Builder</h1>
+  <div class="layout">
+    <app-palette (addNode)="onAddNode($event)" (addEdgeEvent)="onAddEdge($event)"></app-palette>
+    <app-graph-builder
+      [nodes]="nodes"
+      [edges]="edges"
+      (nodesChange)="nodes = $event"
+      (edgesChange)="edges = $event"
+    ></app-graph-builder>
+    <app-exporter [nodes]="nodes" [edges]="edges"></app-exporter>
+  </div>
+</div>

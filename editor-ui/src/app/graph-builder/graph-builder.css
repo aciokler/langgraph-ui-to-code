@@ -1,0 +1,7 @@
+.canvas { position:relative; width:700px; height:500px; border:2px solid #e5e7eb; background:#f9fafb; border-radius:12px; overflow:hidden }
+.node { position:absolute; width:140px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); background:#fff; font-family:Arial, sans-serif; cursor:grab; }
+.node-header { background:#3b82f6; color:#fff; padding:4px 8px; border-top-left-radius:10px; border-top-right-radius:10px; font-weight:bold; text-align:center }
+.node-body { padding:8px; font-size:14px; color:#374151 }
+.node-footer { display:flex; justify-content:space-between; padding:4px 8px; background:#f3f4f6; border-bottom-left-radius:10px; border-bottom-right-radius:10px }
+.drag-handle { cursor:grab; margin-right:4px; }
+.edges { position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none }

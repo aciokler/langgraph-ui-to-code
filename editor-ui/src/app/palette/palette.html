@@ -1,0 +1,23 @@
+<div class="palette">
+  <h3>Add Node</h3>
+  <input type="text" placeholder="Chain name" [(ngModel)]="chainName" />
+  <textarea placeholder="Prompt template" [(ngModel)]="chainPrompt"></textarea>
+  <textarea placeholder="System prompt" [(ngModel)]="systemPrompt"></textarea>
+  <button (click)="addChainNode()">Add Node</button>
+  <h3>Add Edge</h3>
+  <select [(ngModel)]="edgeFrom">
+    @for (n of nodes; track n.id) {
+    <option [value]="n.id">{{n.label}}</option>
+    }
+  </select>
+  <select [(ngModel)]="edgeTo">
+    @for (n of nodes; track n.id) {
+      <option [value]="n.id">{{n.label}}</option>
+    }
+  </select>
+  <select [(ngModel)]="edgeType">
+    <option value="regular">Regular</option>
+    <option value="conditional">Conditional</option>
+  </select>
+  <button (click)="addEdge()">Add Edge</button>
+</div>

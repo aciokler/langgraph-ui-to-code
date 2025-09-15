@@ -1,0 +1,33 @@
+<div class="canvas" (mousemove)="onCanvasMouseMove($event)" (mouseup)="onCanvasMouseUp($event)">
+  @for (n of nodes; track n.id) {
+    <div class="node" [style.left.px]="n.x" [style.top.px]="n.y"
+         (mousedown)="startNodeDrag($event,n)">
+      <div class="node-header">{{n.label}}</div>
+      <div class="node-body">Prompt: {{n.prompt}}</div>
+      <div class="node-body">System: {{n.systemPrompt}}</div>
+      <div class="node-footer">
+        <span class="drag-handle" (mousedown)="$event.stopPropagation(); startEdgeDrag($event, n, 'regular')">🔗</span>
+        <span class="drag-handle" (mousedown)="$event.stopPropagation(); startEdgeDrag($event, n, 'conditional')">⚡</span>
+        <button (click)="remove(n,$event)">🗑️</button>
+      </div>
+    </div>
+  }
+
+
+  <svg class="edges">
+    @for (e of edges; track e.from+e.to) {
+      <line [attr.x1]="getNode(e.from).x" [attr.y1]="getNode(e.from).y"
+            [attr.x2]="getNode(e.to).x" [attr.y2]="getNode(e.to).y"
+            [attr.stroke]="e.type==='conditional' ? '#f59e0b' : '#3b82f6'"
+            stroke-width="2" marker-end="url(#arrow)" />
+    }
+    @if (dragLine) {
+      <line [attr.x1]="dragLine.x1" [attr.y1]="dragLine.y1" [attr.x2]="dragLine.x2" [attr.y2]="dragLine.y2" stroke="#6b7280" stroke-width="2" stroke-dasharray="4" />
+    }
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#3b82f6" />
+      </marker>
+    </defs>
+  </svg>
+</div>
