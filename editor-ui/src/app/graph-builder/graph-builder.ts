@@ -22,7 +22,6 @@ export class GraphBuilder {
   private edgeType: 'regular' | 'conditional' = 'regular';
   dragLine: { x1: number, y1: number, x2: number, y2: number } | null = null;
 
-
 // Update edges from palette
   ngOnChanges() {
 // No special action needed; edges input includes palette edges
@@ -72,7 +71,7 @@ export class GraphBuilder {
     };
     const onUp = (e: MouseEvent) => {
       const targetNode = this.nodes.find(n => {
-        const handleRect = {x: n.x, y: n.y, w: 1500, h: 1000};
+        const handleRect = {x: n.x, y: n.y, w: 300, h: 200};
         console.log(handleRect, e.clientX, e.clientY, n);
         return e.clientX >= handleRect.x && e.clientX <= handleRect.x + handleRect.w && e.clientY >= handleRect.y && e.clientY <= handleRect.y + handleRect.h;
       });
@@ -106,8 +105,9 @@ export class GraphBuilder {
     }
   }
 
-  // onCanvasMouseUp(ev: MouseEvent) {
-  // }
+  onCanvasMouseUp(ev: MouseEvent) {
+    // do nothing now
+  }
 
 
   remove(n: any, ev: MouseEvent) {

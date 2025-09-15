@@ -1,7 +1,8 @@
 <div class="app">
   <h1>LangGraph Workflow Builder</h1>
   <div class="layout">
-    <app-palette (addNode)="onAddNode($event)" (addEdgeEvent)="onAddEdge($event)"></app-palette>
+    <app-palette (addNode)="onAddNode($event)" (addEdgeEvent)="onAddEdge($event)" [nodes]="nodes"
+                 [edges]="edges"></app-palette>
     <app-graph-builder
       [nodes]="nodes"
       [edges]="edges"

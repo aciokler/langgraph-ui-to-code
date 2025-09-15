@@ -13,7 +13,10 @@ import { FormsModule } from '@angular/forms';
 export class App {
   protected readonly title = signal('editor-ui');
 
-  nodes: any[] = [];
+  nodes: any[] = [
+    {id: '1', label: 'Start', type: 'LLMChain', prompt: 'Hello', systemPrompt: 'You are nice ai', x: 20, y: 20},
+    {id: '2', label: 'End', type: 'LLMChain', prompt: 'Goodbye', systemPrompt: 'You are nice ai', x: 200, y: 200}
+  ];
   edges: any[] = [];
 
 
