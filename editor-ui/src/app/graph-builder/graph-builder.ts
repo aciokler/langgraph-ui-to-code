@@ -17,6 +17,8 @@ export class GraphBuilder {
   private nodeDragging: any = null;
   private nodeOffset = {x: 0, y: 0};
 
+  private WIDTH = 170;
+  private HEIGHT = 100;
 
   private edgeDraggingFrom: any = null;
   private edgeType: 'regular' | 'conditional' = 'regular';
@@ -60,7 +62,12 @@ export class GraphBuilder {
   startEdgeDrag(ev: MouseEvent, node: any, type: 'regular' | 'conditional') {
     this.edgeDraggingFrom = node;
     this.edgeType = type;
-    this.dragLine = {x1: node.x + 70, y1: node.y + 40, x2: node.x + 70, y2: node.y + 40};
+    this.dragLine = {
+      x1: node.x + (this.WIDTH / 2),
+      y1: node.y + (this.HEIGHT / 2),
+      x2: node.x + (this.WIDTH / 2),
+      y2: node.y + (this.HEIGHT / 2)
+    };
 
 
     const onMove = (e: MouseEvent) => {
@@ -71,7 +78,7 @@ export class GraphBuilder {
     };
     const onUp = (e: MouseEvent) => {
       const targetNode = this.nodes.find(n => {
-        const handleRect = {x: n.x, y: n.y, w: 300, h: 200};
+        const handleRect = {x: n.x, y: n.y, w: this.WIDTH, h: this.HEIGHT};
         console.log(handleRect, e.clientX, e.clientY, n);
         return e.clientX >= handleRect.x && e.clientX <= handleRect.x + handleRect.w && e.clientY >= handleRect.y && e.clientY <= handleRect.y + handleRect.h;
       });
@@ -122,19 +129,150 @@ export class GraphBuilder {
     return this.nodes.find(x => x.id === id) || {x: 0, y: 0};
   }
 
-  getBezierPath(from: any, to: any): string {
-    const startX = from.x + 60; // center of source node
-    const startY = from.y + 30;
-    const endX = to.x + 60;     // center of target node
-    const endY = to.y + 30;
+  getPath(edge: any): string {
+    const from = this.getNode(edge.from);
+    const to = this.getNode(edge.to);
+
+    return this.bezierPath5(from, to);
+  }
+
+  bezierPath(from: any, to: any) {
+    const startDiffX = from.x - to.x;
+    const endDiffY = from.y - to.y;
+
+    // default
+    var startX = from.x + (this.WIDTH / 2); // center of source node
+    var startY = from.y + this.HEIGHT + 10;
+    var endX = to.x + (this.WIDTH / 2);     // center of target node
+    var endY = to.y;
+
+    if (endDiffY > 0) {
+      endY = to.y + (this.HEIGHT + 10);
+    }
 
     // Control points for a smooth horizontal curve
-    const dx = Math.abs(endX - startX) * 0.5;
+    const dx = Math.abs(endX - startX) * 0.1;
     const controlX1 = startX + dx;
     const controlY1 = startY;
     const controlX2 = endX - dx;
     const controlY2 = endY;
 
     return `M ${startX},${startY} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${endY}`;
+  }
+
+  bezierPath2(from: any, to: any) {
+    const startX = from.x + 60; // center of source node
+    const startY = from.y + 30;
+    const endX = to.x + 60;     // center of target node
+    const endY = to.y + 30;
+
+    // Vector from start → end
+    const dx = endX - startX;
+    const dy = endY - startY;
+
+    // Control point offset: extend in direction of the vector
+    const offset = Math.sqrt(dx * dx + dy * dy) * 0.5; // 50% of distance
+
+    const controlX1 = startX + dx * 0.5; // push forward along the line
+    const controlY1 = startY + dy * 0.0; // keep near startY if you want smoother curves
+    const controlX2 = endX - dx * 0.5;
+    const controlY2 = endY - dy * 0.0;
+
+    return `M ${startX},${startY} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${endY}`;
+  }
+
+  bezierPath3(from: any, to: any) {
+    const startX = from.x + 60; // center of source node
+    const startY = from.y + 30;
+    const endX = to.x + 60;     // center of target node
+    const endY = to.y + 30;
+
+    // Vector from start → end
+    const dx = endX - startX;
+    const dy = endY - startY;
+
+    // Control point offset: extend in direction of the vector
+    const offset = Math.sqrt(dx * dx + dy * dy) * 0.5; // 50% of distance
+
+    const controlX1 = startX + dx * 0.25;
+    const controlY1 = startY + dy * 0.25;
+    const controlX2 = startX + dx * 0.75;
+    const controlY2 = startY + dy * 0.75;
+
+    return `M ${startX},${startY} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${endY}`;
+  }
+
+  bezierPath4(from: any, to: any) {
+    const startDiffX = from.x - to.x;
+    const endDiffY = from.y - to.y;
+
+    // default
+    var startX = from.x + (this.WIDTH / 2); // center of source node
+    var startY = from.y + (this.HEIGHT / 2);
+    var endX = to.x + (this.WIDTH / 2);     // center of target node
+    var endY = to.y + (this.HEIGHT / 2);
+
+
+    // Control points for a smooth horizontal curve
+    const dx = Math.abs(endX - startX) * 0.1;
+    const controlX1 = startX + dx;
+    const controlY1 = startY;
+    const controlX2 = endX - dx;
+    const controlY2 = endY;
+
+    return `M ${startX},${startY} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${endY}`;
+  }
+
+  bezierPath5(from: any, to: any): string {
+    const nodeWidth = this.WIDTH; // match your node width
+    const nodeHeight = this.HEIGHT; // match your node height
+
+    // centers
+    const fromCx = from.x + nodeWidth / 2;
+    const fromCy = from.y + nodeHeight / 2;
+    const toCx = to.x + nodeWidth / 2;
+    const toCy = to.y + nodeHeight / 2;
+
+    const dx = toCx - fromCx;
+    const dy = toCy - fromCy;
+
+    // direction vector normalized
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const ux = dx / len;
+    const uy = dy / len;
+
+    // function to clip point to rectangle perimeter
+    const clipToRect = (cx: number, cy: number, w: number, h: number, dirX: number, dirY: number) => {
+      const hw = w / 2;
+      const hh = h / 2;
+
+      // scale factors for x and y
+      const tx = dirX !== 0 ? hw / Math.abs(dirX) : Infinity;
+      const ty = dirY !== 0 ? hh / Math.abs(dirY) : Infinity;
+
+      // choose the smaller scale (closest side intersection)
+      const t = Math.min(tx, ty);
+
+      return {
+        x: cx + dirX * t,
+        y: cy + dirY * t
+      };
+    };
+
+    // compute perimeter points
+    const start = clipToRect(fromCx, fromCy, nodeWidth, nodeHeight, ux, uy);
+    const end = clipToRect(toCx, toCy, nodeWidth, nodeHeight, -ux, -uy);
+
+    // control points along the line, 25% and 75%
+    // const controlX1 = start.x + dx * 0.25;
+    // const controlY1 = start.y + dy * 0.25;
+    // const controlX2 = start.x + dx * 0.75;
+    // const controlY2 = start.y + dy * 0.75;
+    const controlX1 = start.x + dx * 0.5; // push forward along the line
+    const controlY1 = start.y + dy * 0.0; // keep near startY if you want smoother curves
+    const controlX2 = end.x - dx * 0.5;
+    const controlY2 = end.y - dy * 0.0;
+
+    return `M ${start.x},${start.y} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${end.x},${end.y}`;
   }
 }

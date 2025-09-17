@@ -7,11 +7,19 @@
   color: lightgray;
 }
 
-input, textarea, select, button {
+input, textarea, select {
+  width: 100%;
+  margin-bottom: 4px;
+  background-color: #333;
+  color: lightgray;
+}
+
+button {
   width: 100%;
   margin-bottom: 4px;
   background-color: #444;
   color: lightgray;
+  border: 2px solid #222;
 }
 
 textarea {

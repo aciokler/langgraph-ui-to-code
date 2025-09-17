@@ -48,7 +48,7 @@ NODE_REGISTRY = {
 # ------------------------------
 def build_workflow(nodes: List[NodeConfig], edges: List[EdgeConfig]):
     # Define a simple shared state
-    class WorkflowState(dict):
+    class WorkflowState(BaseModel):
         messages: List[str]
 
     graph = StateGraph(WorkflowState)
