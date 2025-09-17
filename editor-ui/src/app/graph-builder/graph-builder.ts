@@ -121,4 +121,20 @@ export class GraphBuilder {
   getNode(id: string) {
     return this.nodes.find(x => x.id === id) || {x: 0, y: 0};
   }
+
+  getBezierPath(from: any, to: any): string {
+    const startX = from.x + 60; // center of source node
+    const startY = from.y + 30;
+    const endX = to.x + 60;     // center of target node
+    const endY = to.y + 30;
+
+    // Control points for a smooth horizontal curve
+    const dx = Math.abs(endX - startX) * 0.5;
+    const controlX1 = startX + dx;
+    const controlY1 = startY;
+    const controlX2 = endX - dx;
+    const controlY2 = endY;
+
+    return `M ${startX},${startY} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${endX},${endY}`;
+  }
 }

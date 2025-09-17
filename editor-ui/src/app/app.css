@@ -1,2 +1,12 @@
-.layout { display:flex; gap:16px; align-items:flex-start; }
-.app { padding:16px; font-family: Arial, sans-serif }
+.layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.app {
+  padding: 16px;
+  font-family: Arial, sans-serif;
+  background-color: #444;
+  color: lightgray;
+}

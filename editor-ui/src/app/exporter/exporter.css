@@ -1,1 +1,16 @@
-.exporter{border:1px solid #ddd;padding:8px;width:320px}
+.exporter {
+  border: 2px solid #222;
+  border-radius: 12px;
+  padding: 8px;
+  width: 320px;
+  background-color: #444;
+  color: lightgray;
+}
+
+.code-area {
+  max-height: 300px;
+  overflow: auto;
+  background: #444;
+  color: lightgray;
+  padding: 8px;
+}

@@ -24,19 +24,6 @@ export class Palette {
   edgeTo: string = '';
   edgeType: 'regular' | 'conditional' = 'regular';
 
-  // constructor() {
-  //   this.nodes = [
-  //     {id: '1', label: 'Start', type: 'LLMChain', prompt: 'Hello', systemPrompt: 'You are nice ai'},
-  //     {id: '2', label: 'End', type: 'LLMChain', prompt: 'Goodbye', systemPrompt: 'You are nice ai'}
-  //   ];
-  //   this.addNode.emit(this.nodes[0]);
-  //   this.addNode.emit(this.nodes[1]);
-  //   this.edges = [
-  //     {from: '1', to: '2', type: 'regular'}
-  //   ];
-  //   this.addEdgeEvent.emit(this.edges[1]);
-  // }
-
 
   addChainNode() {
     if (this.chainName.trim() === '' || this.chainPrompt.trim() === '') return;
@@ -47,7 +34,6 @@ export class Palette {
       prompt: this.chainPrompt,
       systemPrompt: this.systemPrompt
     };
-    this.nodes.push(node);
     this.addNode.emit(node);
     this.chainName = '';
     this.chainPrompt = '';
@@ -58,7 +44,6 @@ export class Palette {
   addEdge() {
     if (this.edgeFrom && this.edgeTo && this.edgeFrom !== this.edgeTo) {
       const edge = {id: this.edges.length + 1, from: this.edgeFrom, to: this.edgeTo, type: this.edgeType};
-      this.edges.push(edge);
       this.addEdgeEvent.emit(edge);
       this.edgeFrom = this.edgeTo = '';
     }
