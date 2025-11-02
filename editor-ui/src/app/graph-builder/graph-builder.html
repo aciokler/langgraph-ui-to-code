@@ -2,7 +2,7 @@
   @for (n of nodes; track n.id) {
     <div class="node" [style.left.px]="n.x" [style.top.px]="n.y"
          (mousedown)="startNodeDrag($event,n)">
-      <div class="node-header">{{n.label}}</div>
+      <div class="node-header">{{n.name}}</div>
       <div class="node-body">Prompt: {{n.prompt}}</div>
       <div class="node-body">System: {{n.systemPrompt}}</div>
       <div class="node-footer">
@@ -29,7 +29,7 @@
         marker-end="url(#arrow)"/>
     }
     @if (dragLine) {
-      <line [attr.x1]="dragLine.x1" [attr.y1]="dragLine.y1" [attr.x2]="dragLine.x2" [attr.y2]="dragLine.y2" stroke="#6b7280" stroke-width="2" stroke-dasharray="4" />
+      <path [attr.x1]="dragLine.x1" [attr.y1]="dragLine.y1" [attr.x2]="dragLine.x2" [attr.y2]="dragLine.y2" stroke="#6b7280" stroke-width="2" stroke-dasharray="4" />
     }
     <defs>
         <marker id="arrow"

@@ -3,24 +3,40 @@ from pydantic import BaseModel
 from typing import Any, Dict, List
 from langgraph.graph import StateGraph, END
 
+# LangChain imports
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.agents import initialize_agent, Tool
+from langchain.agents import AgentType
+from langchain.prompts import ChatPromptTemplate
+from langchain.schema import StrOutputParser
+from langchain_community.vectorstores import FAISS
+
 app = FastAPI(title="LangGraph Workflow Runner")
+
 
 # ------------------------------
 # Pydantic Models for Validation
 # ------------------------------
-class NodeConfig(BaseModel):
+class Node(BaseModel):
     id: str
     type: str
-    params: Dict[str, Any] = {}
+    name: str
 
-class EdgeConfig(BaseModel):
+
+class Edge(BaseModel):
     source: str
     target: str
 
+
+class Prompt(BaseModel):
+    prompt: str
+    system_prompt: str
+
 class WorkflowRequest(BaseModel):
-    nodes: List[NodeConfig]
-    edges: List[EdgeConfig]
-    initial_state: Dict[str, Any] = {}
+    nodes: List[Node]
+    edges: List[Edge]
+    prompt: Prompt
+
 
 # ------------------------------
 # Example: Node Function Registry
@@ -30,6 +46,7 @@ def echo_node(state, params=None):
     """A node that just echoes input state."""
     return {"messages": state.get("messages", []) + [params.get("text", "no text")]}
 
+
 def uppercase_node(state, params=None):
     """Uppercase last message."""
     messages = state.get("messages", [])
@@ -38,15 +55,50 @@ def uppercase_node(state, params=None):
         messages[-1] = last
     return {"messages": messages}
 
+
+def llm_node(state, params=None):
+    """A node that calls an LLM with tools using LangChain AgentExecutor."""
+
+    if params is None:
+        params = {}
+
+    model_name = params.get("model", "gpt-4o-mini")
+    temperature = params.get("temperature", 0)
+
+    llm = ChatOpenAI(model=model_name, temperature=temperature)
+
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    vectorstore = FAISS.from_texts(["hello world", "langchain is cool"], embeddings)
+    retriever = vectorstore.as_retriever()
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "Answer the question based on the context:\n{context}"),
+        ("human", "{question}")
+    ])
+
+    rag_chain = (
+            {"context": retriever, "question": lambda x: x["question"]}
+            | prompt
+            | llm
+            | StrOutputParser()
+    )
+
+    result = rag_chain.invoke(input="hello")
+    messages = state["messages"]
+    state["messages"] = messages + result
+    return {"messages": messages}
+
+
 NODE_REGISTRY = {
     "echo": echo_node,
     "uppercase": uppercase_node,
 }
 
+
 # ------------------------------
 # Workflow Builder
 # ------------------------------
-def build_workflow(nodes: List[NodeConfig], edges: List[EdgeConfig]):
+def build_workflow(nodes: List[Node], edges: List[Edge]):
     # Define a simple shared state
     class WorkflowState(BaseModel):
         messages: List[str]
@@ -71,6 +123,7 @@ def build_workflow(nodes: List[NodeConfig], edges: List[EdgeConfig]):
         graph.set_entry_point(nodes[0].id)
 
     return graph.compile()
+
 
 # ------------------------------
 # API Endpoints

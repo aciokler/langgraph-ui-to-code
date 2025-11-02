@@ -1,4 +1,10 @@
-fastapi==0.116.2
-uvicorn[standard]==0.35.0
-langgraph==0.6.7
-pydantic==2.11.9
+pip==25.3
+
+fastapi==0.120.0
+uvicorn[standard]==0.38.0
+langgraph==1.0.1
+pydantic==2.12.3
+
+langchain==1.0.2
+langchain-openai==1.0.1
+langchain-community==0.4

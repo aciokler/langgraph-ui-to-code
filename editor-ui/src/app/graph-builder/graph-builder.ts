@@ -1,4 +1,5 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
+import { GraphNode, Edge } from '../model/model';
 
 
 @Component({
@@ -8,10 +9,10 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
   styleUrls: ['./graph-builder.css']
 })
 export class GraphBuilder {
-  @Input() nodes: any[] = [];
-  @Input() edges: any[] = [];
-  @Output() nodesChange = new EventEmitter<any[]>();
-  @Output() edgesChange = new EventEmitter<any[]>();
+  @Input() nodes: GraphNode[] = [];
+  @Input() edges: Edge[] = [];
+  @Output() nodesChange = new EventEmitter<GraphNode[]>();
+  @Output() edgesChange = new EventEmitter<Edge[]>();
 
 
   private nodeDragging: any = null;
@@ -19,6 +20,8 @@ export class GraphBuilder {
 
   private WIDTH = 170;
   private HEIGHT = 100;
+  private HEADER_HEIGHT = 10;
+  private FOOTER_HEIGHT = 10;
 
   private edgeDraggingFrom: any = null;
   private edgeType: 'regular' | 'conditional' = 'regular';
@@ -30,7 +33,7 @@ export class GraphBuilder {
   }
 
 
-  startNodeDrag(ev: MouseEvent, node: any) {
+  startNodeDrag(ev: MouseEvent, node: GraphNode) {
     ev.stopPropagation();
     this.nodeDragging = node;
     this.nodeOffset.x = ev.clientX - node.x;
@@ -59,7 +62,7 @@ export class GraphBuilder {
   }
 
 
-  startEdgeDrag(ev: MouseEvent, node: any, type: 'regular' | 'conditional') {
+  startEdgeDrag(ev: MouseEvent, node: GraphNode, type: 'regular' | 'conditional') {
     this.edgeDraggingFrom = node;
     this.edgeType = type;
     this.dragLine = {
@@ -90,7 +93,8 @@ export class GraphBuilder {
         if (existingEdge) {
           return;
         }
-        this.edges = [...this.edges, {from: this.edgeDraggingFrom.id, to: targetNode.id, type: this.edgeType}];
+
+        this.edges = [...this.edges, new Edge("", this.edgeDraggingFrom.id, targetNode.id, this.edgeType)];
         this.edgesChange.emit(this.edges);
       }
       this.edgeDraggingFrom = null;
@@ -228,10 +232,10 @@ export class GraphBuilder {
     const nodeHeight = this.HEIGHT; // match your node height
 
     // centers
-    const fromCx = from.x + nodeWidth / 2;
-    const fromCy = from.y + nodeHeight / 2;
-    const toCx = to.x + nodeWidth / 2;
-    const toCy = to.y + nodeHeight / 2;
+    const fromCx = from.x + this.WIDTH / 2;
+    const fromCy = from.y + this.HEIGHT / 2;
+    const toCx = to.x + this.WIDTH / 2;
+    const toCy = to.y + this.HEIGHT / 2;
 
     const dx = toCx - fromCx;
     const dy = toCy - fromCy;
@@ -272,6 +276,44 @@ export class GraphBuilder {
     const controlY1 = start.y + dy * 0.0; // keep near startY if you want smoother curves
     const controlX2 = end.x - dx * 0.5;
     const controlY2 = end.y - dy * 0.0;
+
+    return `M ${start.x},${start.y} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${end.x},${end.y}`;
+  }
+
+  getPreviewPath(from: any, mouseX: number, mouseY: number): string {
+    const nodeWidth = 120;
+    const nodeHeight = 60;
+
+    const fromCx = from.x + nodeWidth / 2;
+    const fromCy = from.y + nodeHeight / 2;
+
+    const dx = mouseX - fromCx;
+    const dy = mouseY - fromCy;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const ux = dx / len;
+    const uy = dy / len;
+
+    // clip start point to source perimeter
+    const clipToRect = (cx: number, cy: number, w: number, h: number, dirX: number, dirY: number) => {
+      const hw = w / 2;
+      const hh = h / 2;
+      const tx = dirX !== 0 ? hw / Math.abs(dirX) : Infinity;
+      const ty = dirY !== 0 ? hh / Math.abs(dirY) : Infinity;
+      const t = Math.min(tx, ty);
+      return { x: cx + dirX * t, y: cy + dirY * t };
+    };
+
+    const start = clipToRect(fromCx, fromCy, nodeWidth, nodeHeight, ux, uy);
+
+    // end = mouse point, pushed slightly outward so arrowhead sits off the cursor
+    const offset = 10;
+    const end = { x: mouseX + ux * offset, y: mouseY + uy * offset };
+
+    // control points
+    const controlX1 = start.x + dx * 0.25;
+    const controlY1 = start.y + dy * 0.25;
+    const controlX2 = end.x - dx * 0.25;
+    const controlY2 = end.y - dy * 0.25;
 
     return `M ${start.x},${start.y} C ${controlX1},${controlY1} ${controlX2},${controlY2} ${end.x},${end.y}`;
   }

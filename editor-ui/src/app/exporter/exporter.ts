@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-
+import { GraphNode, NodeType, Edge} from '../model/model';
 
 @Component({
   selector: 'app-exporter',
@@ -8,8 +8,8 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./exporter.css']
 })
 export class Exporter {
-  @Input() nodes: any[] = [];
-  @Input() edges: any[] = [];
+  @Input() nodes: GraphNode[] = [];
+  @Input() edges: Edge[] = [];
 
 
   pythonCode: string | null = null;

@@ -7,12 +7,12 @@
   <h3>Add Edge</h3>
   <select [(ngModel)]="edgeFrom">
     @for (n of nodes; track n.id) {
-    <option [value]="n.id">{{n.label}}</option>
+    <option [value]="n.id">{{n.name}}</option>
     }
   </select>
   <select [(ngModel)]="edgeTo">
     @for (n of nodes; track n.id) {
-      <option [value]="n.id">{{n.label}}</option>
+      <option [value]="n.id">{{n.name}}</option>
     }
   </select>
   <select [(ngModel)]="edgeType">

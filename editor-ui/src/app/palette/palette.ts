@@ -1,5 +1,6 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {GraphNode, Edge, NodeType} from '../model/model';
 
 @Component({
   selector: 'app-palette',
@@ -9,10 +10,10 @@ import {FormsModule} from '@angular/forms';
   styleUrls: ['./palette.css'],
 })
 export class Palette {
-  @Input() nodes: any[] = [];
-  @Input() edges: any[] = [];
-  @Output() addNode = new EventEmitter<any>();
-  @Output() addEdgeEvent = new EventEmitter<any>();
+  @Input() nodes: GraphNode[] = [];
+  @Input() edges: Edge[] = [];
+  @Output() addNode = new EventEmitter<GraphNode>();
+  @Output() addEdgeEvent = new EventEmitter<Edge>();
 
 
   chainName: string = '';
@@ -27,12 +28,14 @@ export class Palette {
 
   addChainNode() {
     if (this.chainName.trim() === '' || this.chainPrompt.trim() === '') return;
-    const node = {
-      id: this.nodes.length + 1,
-      type: 'LLMChain',
-      label: this.chainName,
+    const node: GraphNode = {
+      id: this.nodes.length + 1 + "",
+      type: NodeType.LLMChain,
+      name: this.chainName,
       prompt: this.chainPrompt,
-      systemPrompt: this.systemPrompt
+      systemPrompt: this.systemPrompt,
+      x: 10,
+      y: 10,
     };
     this.addNode.emit(node);
     this.chainName = '';
@@ -43,7 +46,7 @@ export class Palette {
 
   addEdge() {
     if (this.edgeFrom && this.edgeTo && this.edgeFrom !== this.edgeTo) {
-      const edge = {id: this.edges.length + 1, from: this.edgeFrom, to: this.edgeTo, type: this.edgeType};
+      const edge = new Edge("", this.edgeFrom, this.edgeTo, this.edgeType);
       this.addEdgeEvent.emit(edge);
       this.edgeFrom = this.edgeTo = '';
     }
