@@ -15,8 +15,8 @@ export class App {
   protected readonly title = signal('editor-ui');
 
   nodes: GraphNode[] = [
-    {id: "1", name: 'Start', type: NodeType.ToolNode, prompt: 'Hello', systemPrompt: 'You are nice ai', x: 20, y: 20},
-    {id: "2", name: 'End', type: NodeType.LLMChain, prompt: 'Goodbye', systemPrompt: 'You are nice ai', x: 200, y: 200}
+    {id: "1", name: 'Start', type: NodeType.START, prompt: 'Hello', systemPrompt: 'You are nice ai', x: 20, y: 20},
+    {id: "2", name: 'End', type: NodeType.END, prompt: 'Goodbye', systemPrompt: 'You are nice ai', x: 200, y: 200}
   ];
   edges: Edge[] = [];
 

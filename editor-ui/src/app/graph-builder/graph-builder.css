@@ -1,12 +1,14 @@
 .canvas {
   position: relative;
   width: 700px;
-  height: 500px;
   border: 2px solid #222;
   border-radius: 12px;
   background: #444;
   overflow: hidden;
   color: lightgray;
+  display: flex;
+
+  height: 100dvh;
 }
 
 .node {

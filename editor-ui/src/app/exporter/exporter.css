@@ -8,9 +8,10 @@
 }
 
 .code-area {
-  max-height: 300px;
+
   overflow: auto;
   background: #444;
   color: lightgray;
   padding: 8px;
+  height: 100dvh;
 }

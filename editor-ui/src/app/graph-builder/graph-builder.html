@@ -29,7 +29,14 @@
         marker-end="url(#arrow)"/>
     }
     @if (dragLine) {
-      <path [attr.x1]="dragLine.x1" [attr.y1]="dragLine.y1" [attr.x2]="dragLine.x2" [attr.y2]="dragLine.y2" stroke="#6b7280" stroke-width="2" stroke-dasharray="4" />
+      <path
+        [attr.d]="getPreviewPath()"
+        [attr.stroke]="'#6b7280'"
+        stroke-width="2"
+        fill="none"
+        marker-end="url(#arrow)"
+        stroke-dasharray="4"/>
+<!--      <line [attr.x1]="dragLine.x1" [attr.y1]="dragLine.y1" [attr.x2]="dragLine.x2" [attr.y2]="dragLine.y2" stroke="#6b7280" stroke-width="2" stroke-dasharray="4" />-->
     }
     <defs>
         <marker id="arrow"
